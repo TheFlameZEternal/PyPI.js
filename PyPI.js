@@ -3,23 +3,16 @@ function Pack2() {} // random
 function Pack3() {} // asyncio
 function Pack4() {} // datetime
 function Pack5() {} // math
+function Pack6() {} // json
+function Pack7() {} // html
 
-function print(object) {
-	console.log(object);
-}
-
-Pack.prototype.print = function(object) {
-	console.log(object);
+Pack7.prototype.clear = function() {
+	document.open();
+	document.close();
 };
 
-function clear() {
-	document.open();
-	document.close();
-}
-
-Pack.prototype.clear = function() {
-	document.open();
-	document.close();
+Pack7.prototype.isFullscreen = function() {
+	return ((screen.availHeight || screen.height-30) <= window.innerHeight) ? true : false;
 };
 
 Pack2.prototype.choice = function(array) {
@@ -31,215 +24,68 @@ Pack2.prototype.randint = function(min, max) {
 };
 
 Pack2.prototype.randopp = function(chance, min, max, log) {
-	let pack = new Pack();
-	opportunity = pack.randomInt(min, max);
+	var pack = new Pack2();
+	var opportunity = pack.randomInt(min, max);
 	
-	if (log) {
-		console.log(opportunity);
-	}
-
-	if (chance <= opportunity) {
-		return true;
-	}
-
-	else if (chance > opportunity) {
-		return false;
-	}
-};
-
-Pack.prototype.randomChoice = function(array) {
-	return array[Math.floor(Math.random() * (Number(array.length)))];
+	if (log) { console.log(opportunity); }
+	
+	return (chance <= opportunity) ? true : (chance > opportunity) ? false : 0;
 };
 
 Array.prototype.randomChoice = function() {
 	return this[Math.floor(Math.random() * (Number(this.length)))];
 };
 
-Pack.prototype.randomInt = function(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
-};
-
-Pack.prototype.randomOpp = function(chance, min, max, log) {
-	let pack = new Pack();
-	opportunity = pack.randomInt(min, max);
-	
-	if (log) {
-		console.log(opportunity);
-	}
-
-	if (chance <= opportunity) {
-		return true;
-	}
-
-	else if (chance > opportunity) {
-		return false;
-	}
-};
-
 Pack3.prototype.sleep = function(time) {
 	return new Promise(resolve => setTimeout(resolve, time*1000));
 };
 
-Pack.prototype.sleep = function(time) {
-	return new Promise(resolve => setTimeout(resolve, time*1000));
+Pack5.prototype.divmod = function(x, y) {
+	var [result, integer, value] = [ [], Math.floor(x / y), Math.floor(x % y) ];
+	result.push(integer); result.push(value);
+	
+	return result;
 };
 
 function divmod(x, y) {
-	result = [];
-	integer = Math.floor(x / y);
-	value = Math.floor(x % y);
-	result.push(integer);
-	result.push(value);
+	var [result, integer, value] = [ [], Math.floor(x / y), Math.floor(x % y) ];
+	result.push(integer); result.push(value);
 
 	return result;
 }
 
-Pack5.prototype.divmod = function(x, y) {
-	result = [];
-	integer = Math.floor(x / y);
-	value = Math.floor(x % y);
-	result.push(integer);
-	result.push(value);
-
-	return result;
-};
-
-Pack.prototype.divmod = function(x, y) {
-	result = [];
-	integer = Math.floor(x / y);
-	value = Math.floor(x % y);
-	result.push(integer);
-	result.push(value);
-
-	return result;
+String.prototype.replaceFor = function(array, repWith) {
+    for (var i = 0, o = this; i < array.length; i++) { o = o.replace(array[i], repWith[i]); }
+    return o;
 };
 
 Pack4.prototype.datetime = function(datestring) {
-	d = new Date();
+	var d = new Date();
 	
-	FullDay = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-	FullMonth = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+	var FullDay = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+	var FullMonth = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 	
-	xday = (d.getDate()).toString();
-	xmonth = (d.getMonth()+1).toString();
-	xyear = (d.getYear()-100).toString();
-	if (xday < 10) {
-		xday = "0"+xday.toString();
-	}
-	if (xmonth < 10) {
-		xmonth = "0"+xmonth.toString();
-	}
+	var [xday, xmonth, xyear] = [ (d.getDate()).toString(), (d.getMonth()+1).toString(), (d.getYear()-100).toString()];
+	
+	if (xday < 10) { xday = "0"+xday.toString(); }
+	if (xmonth < 10) { xmonth = "0"+xmonth.toString(); }
 	
 	for (let i = 0; i < datestring.length; i++) {
-		datestring = datestring.replace("%H", d.getHours());
-		datestring = datestring.replace("%M", d.getMinutes());
-		datestring = datestring.replace("%S", d.getSeconds());
-		datestring = datestring.replace("%A", FullDay[d.getDay()]);
-		datestring = datestring.replace("%d", d.getDate());
-		datestring = datestring.replace("%b", d.getMonth()+1);
-		datestring = datestring.replace("%B", FullMonth[d.getMonth()]);
-		datestring = datestring.replace("%Y", d.getFullYear());
-		datestring = datestring.replace("%x", `${xmonth}/${xday}/${xyear}`);
+		var datestring = datestring.replace("%H", d.getHours());
+		datestring = datestring.replaceFor(
+			["%M", "%S", "%A", "%d", "%b", "%B", "%Y", "%x"],
+			[d.getMinutes(), d.getSeconds(), FullDay[d.getDay()], d.getDate(), d.getMonth()+1, FullMonth[d.getMonth()], d.getFullYear(), `${xmonth}/${xday}/${xyear}`]
+		);
 	}
 	
 	return datestring;
-};
-
-Pack.prototype.datetime = function(datestring) {
-	d = new Date();
-	
-	FullDay = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-	FullMonth = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-	
-	xday = (d.getDate()).toString();
-	xmonth = (d.getMonth()+1).toString();
-	xyear = (d.getYear()-100).toString();
-	if (xday < 10) {
-		xday = "0"+xday.toString();
-	}
-	if (xmonth < 10) {
-		xmonth = "0"+xmonth.toString();
-	}
-	
-	for (let i = 0; i < datestring.length; i++) {
-		datestring = datestring.replace("%H", d.getHours());
-		datestring = datestring.replace("%M", d.getMinutes());
-		datestring = datestring.replace("%S", d.getSeconds());
-		datestring = datestring.replace("%A", FullDay[d.getDay()]);
-		datestring = datestring.replace("%d", d.getDate());
-		datestring = datestring.replace("%b", d.getMonth()+1);
-		datestring = datestring.replace("%B", FullMonth[d.getMonth()]);
-		datestring = datestring.replace("%Y", d.getFullYear());
-		datestring = datestring.replace("%x", `${xmonth}/${xday}/${xyear}`);
-	}
-	
-	return datestring;
-};
-
-Pack4.prototype.timeMod = function(time) {
-	results = [];
-	div1 = divmod(time, 60);
-	m = div1[0];
-	s = div1[1];
-	div2 = divmod(m, 60);
-	h = div2[0];
-	m = div2[1];
-	div3 = divmod(h, 24);
-	d = div3[0];
-	h = div3[1];
-	
-	results.push(d);
-	results.push(h);
-	results.push(m);
-	results.push(s);
-	return results;
-};
-
-Pack.prototype.timeMod = function(time) {
-	results = [];
-	div1 = divmod(time, 60);
-	m = div1[0];
-	s = div1[1];
-	div2 = divmod(m, 60);
-	h = div2[0];
-	m = div2[1];
-	div3 = divmod(h, 24);
-	d = div3[0];
-	h = div3[1];
-	
-	results.push(d);
-	results.push(h);
-	results.push(m);
-	results.push(s);
-	return results;
-};
-
-Pack.prototype.prune = function(array, int, type) {
-	if (type == null) { type = "<"; }
-	if (int == null) {int = array.length; }
-	for (let i = 0; i < int; i++) {
-		if (type == "<") { array.pop(); }
-		else if (type == ">") { array.shift(); }
-	}
-	return array;
 };
 
 Array.prototype.prune = function(int, type) {
 	if (type == null) { type = "<"; }
-	if (int == null) {int = this.length; }
-	for (let i = 0; i < int; i++) {
-		if (type == "<") { this.pop(); }
-		else if (type == ">") { this.shift(); }
-	}
+	if (int == null) { int = this.length; }
+	for (let i = 0; i < int; i++) { (type == "<") ? this.pop() : (type == ">") ? this.shift() : 0; }
 	return this;
-};
-
-Pack.prototype.get = function(string, int, type) {
-    if (int == null) { int = 0; }
-	if (type == null || type.toLowerCase() == "letter" || type.toLowerCase() == "l") { spl = ""; }
-	else if (type.toLowerCase() == "word" || type.toLowerCase() == "w") { spl = " "; }
-	
-	return string.split(spl)[int];
 };
 
 String.prototype.get = function(int, type) {
@@ -250,242 +96,167 @@ String.prototype.get = function(int, type) {
 	return this.split(spl)[int];
 };
 
-Pack.prototype.remove = function(array, int) {
-	const res = [];
-	const o = array;
-	const length = o.length;
-	for (let i = 0; i < length; i++) {
-		if (i < int || i > int) {
-		    res.push(array.shift());
-		}
-		if (i == int) {
-		    array.shift();
-		}
-	}
-    return res;
-};
-
-
 Array.prototype.remove = function(int) {
-	const res = [];
-	const o = this;
-	const length = o.length;
+	const [res, o, length] = [ [], this, o.length];
 	for (let i = 0; i < length; i++) {
-		if (i < int || i > int) {
-		    res.push(this.shift());
-		}
-		if (i == int) {
-		    this.shift();
-		}
+		if (i < int || i > int) { res.push(this.shift()); }
+		if (i == int) { this.shift(); }
 	}
-    return res;
+	return res;
 };
-
-Pack.prototype.flip = function(array, int1, int2) {
-	const a = array[int1];
-	const b = array[int2];
-	
-	array[int1] = b;
-	array[int2] = a;
-	
-	return array;
-}
 
 Array.prototype.flip = function(int1, int2) {
-	const a = this[int1];
-	const b = this[int2];
-	
-	this[int1] = b;
-	this[int2] = a;
-	
+	[this[int1], this[int2]] = [this[int2], this[int1]];
 	return this;
 };
 
-Pack.prototype.flop = function(array, int1, int2) {
-	const a = array[int1];
-	const b = array[int2];
-	
-	const res = [];
-	const o = array;
-	const length = o.length;
-	for (let i = 0; i < length; i++) {
-		if (i < int1 || i > int1) {
-		    res.push(a);
-		    array.shift();
-		}
-		if (i == int1) {
-		    res.push(b);
-		    array.shift();
-		}
-	}
-    return res;
-};
-
 Array.prototype.flop = function(int1, int2) {
-	const a = this[int1];
-	const b = this[int2];
-	
-	const res = [];
-	const o = this;
+	const [res, o, a, b] = [ [], this, this[int1], this[int2]];
 	const length = o.length;
 	for (let i = 0; i < length; i++) {
-		if (i < int1 || i > int1) {
-		    res.push(a);
-		    this.shift();
-		}
-		if (i == int1) {
-		    res.push(b);
-		    this.shift();
-		}
+		if (i < int1 || i > int1) { res.push(a); this.shift(); }
+		if (i == int1) { res.push(b); this.shift(); }
 	}
-    return res;
-};
-
-Pack.prototype.pushTo = function(array, object, int) {
-	const res = [];
-	const o = array;
-	const length = o.length;
-	for (let i = 0; i < length; i++) {
-		if (i < int || i > int) {
-		    res.push(array.shift());
-		}
-		
-		if (i == int) {
-		    res.push(object);
-		    res.push(array.shift());
-		}
-	}
-    return res;
+	return res;
 };
 
 Array.prototype.pushTo = function(object, int) {
-	const res = [];
-	const o = this;
+	const [res, o] = [ [], this];
 	const length = o.length;
 	for (let i = 0; i < length; i++) {
-		if (i < int || i > int) {
-		    res.push(this.shift());
-		}
-		
-		if (i == int) {
-		    res.push(object);
-		    res.push(this.shift());
-		}
+		if (i < int || i > int) { res.push(this.shift()); }
+		if (i == int) { res.push(object); res.push(this.shift()); }
 	}
     return res;
 };
 
 String.prototype.includesFor = function(array) {
 	for (let i = 0; i < array.length; i++) {
-		if (this.includes(array[i])) {
-			return true;
-		}
-	}
-	return false;
-}
+		if (this.includes(array[i])) { return true; }
+	} return false;
+};
 
 Array.prototype.includesFor = function(array) {
 	for (let i = 0; i < array.length; i++) {
-		if (this.includes(array[i])) {
-			return true;
-		}
-	}
-	return false;
-}
-
-Pack.prototype.includesFor = function(string, array) {
-	for (let i = 0; i < array.length; i++) {
-		if (string.includes(array[i])) {
-			return true;
-		}
-	}
-	return false;
-}
+		if (this.includes(array[i])) { return true; }
+	} return false;
+};
 
 String.prototype.startsWithFor = function(array) {
 	for (let i = 0; i < array.length; i++) {
-		if (this.startsWith(array[i])) {
-			return true
-		}
-	}
-	return false;
-}
-
-Pack.prototype.startsWithFor = function(string, array) {
-	for (let i = 0; i < array.length; i++) {
-		if (string.startsWith(array[i])) {
-			return true
-		}
-	}
-	return false;
-}
+		if (this.startsWith(array[i])) { return true; }
+	} return false;
+};
 
 String.prototype.endsWithFor = function(array) {
 	for (let i = 0; i < array.length; i++) {
-		if (this.endsWith(array[i])) {
-			return true
-		}
-	}
-	return false;
-}
-
-Pack.prototype.endsWithFor = function(string, array) {
-	for (let i = 0; i < array.length; i++) {
-		if (string.endsWith(array[i])) {
-			return true
-		}
-	}
-	return false;
-}
-
-String.prototype.equalFor = function(array) {
-	for (let i = 0; i < array.length; i++) {
-		if (this == array[i]) {
-			return true
-		}
-	}
-	return false;
-}
-
-Pack.prototype.equalFor = function(string, array) {
-	for (let i = 0; i < array.length; i++) {
-		if (string == array[i]) {
-			return true
-		}
-	}
-	return false;
-}
+		if (this.endsWith(array[i])) { return true; }
+	} return false;
+};
 
 Number.prototype.compareFor = function(array, symb) {
-    res = [];
-	symbols = [">", "<", ">=", "<=", "==", "!="];
-	if (symb == null) {
-	    symb = "==";
-	}
+    var [res, symbols] = [ [], [">", "<", ">=", "<=", "==", "!="] ];
+	if (symb == null || !symbols.includes(symb)) { var symb = "=="; }
 	for (let i = 0; i < array.length; i++) {
-	    var thing = new Function(`if (${parseInt(this)} ${symb} ${array[i]}) { return true; } else { return false; }`);
-	    res.push(thing());
+	    var thing = new Function(`if (${parseInt(this)} ${symb} ${array[i]}) { return true; } else { return false; }`); res.push(thing());
 	}
 	return res;
+};
+
+String.prototype.splitFor = function(array) {
+    var res = this;
+    for (let i = 0; i < array.length; i++) {
+        res = res.split(array[i]); res = res.join("||SPLITHERE||");
+    }
+    return res.split("||SPLITHERE||");
 }
 
-Pack.prototype.compareFor = function(int, array, symb) {
-    res = [];
-	symbols = [">", "<", ">=", "<=", "==", "!="];
-	if (symb == null) {
-	    symb = "==";
-	}
-	for (let i = 0; i < array.length; i++) {
-	    var thing = new Function(`if (${parseInt(int)} ${symb} ${array[i]}) { return true; } else { return false; }`);
-	    res.push(thing());
-	}
-	return res;
+Pack6.prototype.load = function(obj) {
+	return JSON.parse(obj);
+};
+
+Pack6.prototype.dump = function(obj, args) {
+    try {
+    if (args.indent != null) {
+        var [a, b] = [ JSON.stringify(obj).split(","), [] ];
+        for (let i = 0; i < args.indent; i++) { b.push(" "); }
+
+        console.log(a.join(",").split("{"));
+        
+        return a.join(`,\n${b.join("")}`);
+    }} catch(err) {}
+
+    return JSON.stringify(obj);
 }
 
-const PyPI = new Pack(); // PyPI.includesFor("abc", ["a", "b"])
-const random = new Pack2(); // random.randint(1, 5)
-const asyncio = new Pack3(); // await asyncio.sleep(1)
-const datetime = new Pack4(); // datetime.datetime("%H:%M:%S")
-const extMath = new Pack5(); // extMath.divmod(seconds, 60)
+String.prototype.endsWithC = function(stuff) {
+	for (let i = this.length, n = stuff.length; i > 0, n > 0; i--, n--) {
+	    if (this[i-1] == stuff[n-1]) { return true; }
+	} return false;
+};
 
-// require('./PyPI.js')
+String.prototype.startsWithC = function(stuff) {
+	for (let i = 0, n = 0; i < this.length, n < stuff.length; i++, n++) {
+	    if (this[i] == stuff[n]) { return true; }
+	} return false;
+};
+
+Array.prototype.endsWithC = function(stuff) {
+	for (let i = this.length, n = stuff.length; i > 0, n > 0; i--, n--) {
+	    if (this[i-1] == stuff[n-1]) { return true; }
+	} return false;
+};
+
+Array.prototype.startsWithC = function(stuff) {
+	for (let i = 0, n = 0; i < this.length, n < stuff.length; i++, n++) {
+	    if (this[i] == stuff[n]) { return true; }
+	} return false;
+};
+
+Array.prototype.equalFor = function(array) {
+    for (let i = 0; i < array.length; i++) {
+        if (this == array[i]) { return true; }
+    } return false;
+};
+
+String.prototype.equalFor = function(array) {
+    for (let i = 0; i < array.length; i++) {
+        if (this == array[i]) { return true; }
+    } return false;
+};
+
+Number.prototype.equalFor = function(array) {
+    for (let i = 0; i < array.length; i++) {
+        if (this == array[i]) { return true; }
+    } return false;
+};
+
+var PyPI = new Pack(); // PyPI.includesFor("abc", ["a", "b"])
+var random = new Pack2(); // random.randint(1, 5)
+var asyncio = new Pack3(); // await asyncio.sleep(1)
+var datetime = new Pack4(); // datetime.datetime("%H:%M:%S")
+var extMath = new Pack5(); // extMath.divmod(seconds, 60)
+var json = new Pack6(); // json.load(obj)
+var html = new Pack7(); // html.isFullScreen()
+
+/*  Node JS  */
+
+	/*  exporting  */
+		// add this line back for node js
+		// export {PyPI, random, asyncio, datetime, extMath, json};
+		
+	
+	/*  importing  */
+		// import './PyPI.js';
+		// import {random} from './PyPI.js';
+		
+		
+		
+/*  Web JS  */
+
+	/*  importing  */ /*
+			<head>
+				<script type="text/javascript" src="./PyPI.js"></script>
+			</head>
+			
+		*/
